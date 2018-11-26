@@ -4,11 +4,15 @@ require (
 	github.com/Gurpartap/logrus-stack v0.0.0-20170710170904-89c00d8a28f4
 	github.com/apex/log v1.1.0
 	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
+	github.com/golang/lint v0.0.0-20181026193005-c67002cb31c3 // indirect
 	github.com/google/gopacket v1.1.16-0.20181108175517-ec90f6c2c025
 	github.com/k0kubun/pp v2.3.0+incompatible
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
+	github.com/mitchellh/gox v0.4.0 // indirect
+	github.com/mitchellh/iochan v1.0.0 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/sirupsen/logrus v1.2.0
 	github.com/urfave/cli v1.20.0
+	golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3 // indirect
 )

@@ -19,7 +19,7 @@ GO ?= GO111MODULE=on go
 ci: depsdev test lint ## Run test and more...
 
 depsdev: ## Installing dependencies for development
-	$(GO) get github.com/golang/lint/golint
+	$(GO) get -u github.com/golang/lint/golint
 	$(GO) get -u github.com/tcnksm/ghr
 
 test: ## Run test
@@ -34,7 +34,8 @@ lint: ## Exec golint
 
 build: ## Build as linux binary
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Building$(RESET)"
-	$(GO) build -ldflags "-X main.version=$(VERSION) -X main.revision=$(REVISION) -X \"main.goversion=$(GOVERSION)\" -X \"main.builddate=$(BUILDDATE)\" -X \"main.builduser=$(ME)\"" -o $(BUILD)/$(DIST)/pdump
+	BUILD=$(BUILD) DIST=$(DIST) misc/build
+
 
 pkg: ## Create some distribution packages
 	rm -rf builds && mkdir builds

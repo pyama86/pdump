@@ -1,0 +1,23 @@
+#!/bin/bash
+XC_OS='linux'
+XC_ARCH=amd64
+XC_NAME=pdump
+
+VERSION=${1:-$(cat version)}
+REVISION=${2:-$(git describe --always)}
+GOVERSION=$(go version)
+BUILDDATE=$(date '+%Y/%m/%d %H:%M:%S %Z')
+ME=$(whoami)
+echo $VERSION
+rm -rf pkg && mkdir pkg
+
+GO111MODULE=on go build -ldflags \
+        "-X main.version=${VERSION} -X main.revision=${REVISION} -X \"main.goversion=${GOVERSION}\" -X \"main.builddate=${BUILDDATE}\" -X \"main.builduser=${ME}\"" \
+        -o ${BUILD}/${XC_ARCH}_${DIST}/pdump
+
+for PLATFORM in $(find ./pkg -mindepth 1 -maxdepth 1 -type d); do
+  OSARCH=$(basename $PLATFORM)
+  pushd ${PLATFORM} >/dev/null 2>&1
+  zip ../${OSARCH}.zip ./*
+  popd >/dev/null 2>&1
+done
