@@ -1,10 +1,39 @@
 # pdump
-
-
-
 ## Description
 
+Detect DDOS and execute arbitrary command
+
 ## Usage
+
+```
+Usage of pdump:
+  -a uint
+        alert threshould(Short) (default 10)
+  -alert uint
+        alert threshould (default 10)
+  -b uint
+        BufflerLength(Short)
+  -buffer uint
+        BufflerLength
+  -e string
+        exec command(Short)
+  -exec string
+        exec command
+  -i uint
+        monitor interval(Short) (default 30)
+  -interval uint
+        monitor interval (default 30)
+  -n string
+        monitor nic(Short)
+  -nic string
+        monitor nic
+  -s uint
+        monitor sec(Short) (default 5)
+  -sec uint
+        monitor sec (default 5)
+  -version
+        Print version information and quit.
+```
 
 ## Install
 
