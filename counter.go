@@ -22,6 +22,9 @@ func (c *counter) avg() uint {
 	for _, n := range c.sums {
 		s += n
 	}
+	if s == 0 {
+		return 0
+	}
 	return s / c.len
 }
 
