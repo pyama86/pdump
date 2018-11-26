@@ -1,0 +1,18 @@
+language: go
+sudo: required
+before_install:
+  - sudo apt-get update -q
+  - sudo apt-get -qqy install build-essential git curl libpcap0.8-dev
+script:
+  - sudo PATH=$PATH GOPATH=$GOPATH GO="GO111MODULE=on go" make ci
+go:
+  - 1.11
+  - tip
+
+notifications:
+  slack: pepabo:CQkcN0cdvPSJvVsK2D48qYyV
+
+cache:
+  directories:
+    - /go/pkg/mod/cache/download
+    - /go/src/github.com
