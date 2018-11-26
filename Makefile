@@ -9,8 +9,8 @@ BOLD=\033[1m
 REVISION=$(shell git describe --always)
 GOVERSION=$(shell go version)
 BUILDDATE=$(shell date '+%Y/%m/%d %H:%M:%S %Z')
-
-BUILD=tmp/bin
+DIST ?= darwin
+BUILD=pkg
 ME=$(shell whoami)
 default: build
 
@@ -34,7 +34,11 @@ lint: ## Exec golint
 
 build: ## Build as linux binary
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Building$(RESET)"
-	./misc/build $(VERSION) $(REVISION)
+	$(GO) build -ldflags "-X main.version=$(VERSION) -X main.revision=$(REVISION) -X \"main.goversion=$(GOVERSION)\" -X \"main.builddate=$(BUILDDATE)\" -X \"main.builduser=$(ME)\"" -o $(BUILD)/$(DIST)/pdump
+
+pkg: ## Create some distribution packages
+	rm -rf builds && mkdir builds
+	docker-compose up $(DISTS)
 
 ghr: ## Upload to Github releases without token check
 ifeq 'master' '$(DRONE_BRANCH)'
@@ -44,4 +48,4 @@ else
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
 	ghr -u pyama86 -prerelease -recreate v$(VERSION)-$(DRONE_BRANCH)-latest pkg
 endif
-.PHONY: test
+.PHONY: test pkg
