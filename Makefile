@@ -41,11 +41,6 @@ pkg: ## Create some distribution packages
 	docker-compose up $(DISTS)
 
 ghr: ## Upload to Github releases without token check
-ifeq 'master' '$(DRONE_BRANCH)'
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
 	ghr -u pyama86 v$(VERSION)-$(REVISION) pkg
-else
-	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
-	ghr -u pyama86 -prerelease -recreate v$(VERSION)-$(DRONE_BRANCH)-latest pkg
-endif
 .PHONY: test pkg
