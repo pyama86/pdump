@@ -3,7 +3,7 @@ MAINTAINER pyama86 <www.kazu.com@gmail.com>
 
 ARG GO_VERSION
 
-RUN yum install -y epel-release make clang glibc gcc libpcap-devel
+RUN yum install -y epel-release make clang glibc gcc libpcap-devel git
 ENV FILE go$GO_VERSION.linux-amd64.tar.gz
 ENV URL https://storage.googleapis.com/golang/$FILE
 
@@ -11,7 +11,6 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN set -eux &&\
-  yum -y install git &&\
   yum -y clean all &&\
   curl -OL $URL &&\
 	tar -C /usr/local -xzf $FILE &&\

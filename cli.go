@@ -206,7 +206,7 @@ func cycle(p *cycleParams) error {
 		for _, i := range ips {
 			c := counters[i]
 			c.included()
-			logrus.Debug(pp.Sprint(c))
+			logrus.Debugf("ip:%s value:%v", i, pp.Sprint(*c))
 			if c.avg()*p.alert < c.current && c.len > requiredSample && p.exec != "" {
 				logrus.Infof("avg: %d, current: %d exec command:%s", c.avg(), c.current, p.exec)
 				out, err := exec.Command(p.exec, i).CombinedOutput()
