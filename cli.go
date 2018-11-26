@@ -12,6 +12,10 @@ import (
 	"sync"
 	"time"
 
+	logrus_stack "github.com/Gurpartap/logrus-stack"
+	"github.com/k0kubun/pp"
+	"github.com/sirupsen/logrus"
+
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
@@ -24,6 +28,12 @@ var (
 	builddate string
 	builduser string
 )
+
+func init() {
+	callerLevels := logrus.AllLevels
+	stackLevels := []logrus.Level{logrus.PanicLevel, logrus.FatalLevel}
+	logrus.AddHook(logrus_stack.NewHook(callerLevels, stackLevels))
+}
 
 // Exit codes are int values that represent an exit code for a particular error.
 const (
@@ -87,7 +97,7 @@ func (cli *CLI) Run(args []string) int {
 	}
 
 	if err := cycle(&param); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		logrus.Error(err)
 		return ExitCodeError
 	}
 	return ExitCodeOK
@@ -95,6 +105,10 @@ func (cli *CLI) Run(args []string) int {
 }
 
 func cycle(p *cycleParams) error {
+	logrus.SetLevel(logrus.InfoLevel)
+	if os.Getenv("DEBUG") != "" {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
 	var handle *pcap.Handle
 	inactive, err := pcap.NewInactiveHandle(p.nic)
 	if err != nil {
@@ -151,11 +165,13 @@ func cycle(p *cycleParams) error {
 	packetChannel := make(chan gopacket.Packet, p.buffer)
 
 	for {
+		logrus.Debug("start packet poling")
 		ctx := context.Background()
 		ctx, cancel := context.WithCancel(ctx)
 		wg := &sync.WaitGroup{}
 		go func() {
 			wg.Add(1)
+			logrus.Debug("start poling goroutine")
 		INL:
 			for {
 				select {
@@ -169,6 +185,7 @@ func cycle(p *cycleParams) error {
 					}
 				}
 			}
+			logrus.Debug("end poling goroutine")
 			wg.Done()
 		}()
 
@@ -189,7 +206,9 @@ func cycle(p *cycleParams) error {
 		for _, i := range ips {
 			c := counters[i]
 			c.included()
+			logrus.Debug(pp.Sprint(c))
 			if c.avg()*p.alert < c.current && c.len > requiredSample && p.exec != "" {
+				logrus.Infof("avg: %d, current: %d exec command:%s", c.avg(), c.current, p.exec)
 				out, err := exec.Command(p.exec, i).CombinedOutput()
 				if err != nil {
 					return fmt.Errorf("exec cmd error:%s %s", err, string(out))
@@ -197,6 +216,7 @@ func cycle(p *cycleParams) error {
 			}
 			c.reset()
 		}
+		logrus.Debug("end packet poling")
 		time.Sleep(time.Duration(p.interval) * time.Second)
 	}
 	return nil
