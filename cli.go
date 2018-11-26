@@ -15,7 +15,6 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
-	"github.com/k0kubun/pp"
 )
 
 var (
@@ -28,10 +27,11 @@ var (
 
 // Exit codes are int values that represent an exit code for a particular error.
 const (
-	ExitCodeOK    int  = 0
-	ExitCodeError int  = 1 + iota
-	snaplen       int  = 65536
-	counterCapa   uint = 30
+	ExitCodeOK     int  = 0
+	ExitCodeError  int  = 1 + iota
+	snaplen        int  = 65536
+	counterCapa    uint = 30
+	requiredSample uint = 3
 )
 
 // CLI is the command line object
@@ -229,13 +229,12 @@ func cycle(p *cycleParams) error {
 				c.resetAll()
 			} else {
 				c.included()
-				if c.avg()*p.alert < c.current && p.exec != "" {
+				if c.avg()*p.alert < c.current && c.len > requiredSample && p.exec != "" {
 					out, err := exec.Command(p.exec, i).CombinedOutput()
 					if err != nil {
 						return fmt.Errorf("exec cmd error:%s %s", err, string(out))
 					}
 				}
-				pp.Println(int(c.avg()))
 			}
 			c.reset()
 		}
