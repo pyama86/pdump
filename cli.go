@@ -49,43 +49,6 @@ type cycleParams struct {
 	exec     string
 }
 
-type counter struct {
-	current uint
-	sums    []uint
-	len     uint
-	capa    uint
-}
-
-func (c *counter) resetAll() {
-	c.current = 0
-	c.sums = []uint{}
-	c.len = 0
-}
-
-func (c *counter) reset() {
-	c.current = 0
-}
-
-func (c *counter) avg() uint {
-	var s uint
-	for _, n := range c.sums {
-		s += n
-	}
-	return s / c.len
-}
-
-func (c *counter) increment() {
-	c.current++
-}
-func (c *counter) included() {
-	c.sums = append(c.sums, c.current)
-	c.len++
-	if c.len > c.capa-1 {
-		c.sums = c.sums[1:]
-		c.len--
-	}
-}
-
 // Run invokes the CLI with the given arguments.
 func (cli *CLI) Run(args []string) int {
 	var (
@@ -225,15 +188,11 @@ func cycle(p *cycleParams) error {
 		wg.Wait()
 		for _, i := range ips {
 			c := counters[i]
-			if c.current == 0 {
-				c.resetAll()
-			} else {
-				c.included()
-				if c.avg()*p.alert < c.current && c.len > requiredSample && p.exec != "" {
-					out, err := exec.Command(p.exec, i).CombinedOutput()
-					if err != nil {
-						return fmt.Errorf("exec cmd error:%s %s", err, string(out))
-					}
+			c.included()
+			if c.avg()*p.alert < c.current && c.len > requiredSample && p.exec != "" {
+				out, err := exec.Command(p.exec, i).CombinedOutput()
+				if err != nil {
+					return fmt.Errorf("exec cmd error:%s %s", err, string(out))
 				}
 			}
 			c.reset()
