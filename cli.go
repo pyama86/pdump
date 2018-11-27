@@ -209,7 +209,7 @@ func cycle(p *cycleParams) error {
 			logrus.Debugf("ip:%s value:%v", i, pp.Sprint(*c))
 			if c.avg()*p.alert < c.current && c.len > requiredSample && p.exec != "" {
 				logrus.Infof("avg: %d, current: %d exec command:%s", c.avg(), c.current, p.exec)
-				out, err := exec.Command(p.exec, i, fmt.Sprintf(`{ current: %d, avg: %d }`, c.current, c.avg())).CombinedOutput()
+				out, err := exec.Command(p.exec, i, fmt.Sprintf(`{ "current": %d, "avg": %d }`, c.current, c.avg())).CombinedOutput()
 				if err != nil {
 					return fmt.Errorf("exec cmd error:%s %s", err, string(out))
 				}
