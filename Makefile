@@ -43,5 +43,5 @@ pkg: ## Create some distribution packages
 
 ghr: ## Upload to Github releases without token check
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
-	ghr -u pyama86 v$(VERSION)-$(REVISION) pkg
+	ghr -u pyama86 v$(VERSION) pkg
 .PHONY: test pkg
