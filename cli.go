@@ -223,6 +223,6 @@ func cycle(p *cycleParams) error {
 }
 
 func printVersion() {
-	fmt.Printf("stns version: %s (%s)\n", version, revision)
+	fmt.Printf("pdump version: %s (%s)\n", version, revision)
 	fmt.Printf("build at %s (with %s) by %s\n", builddate, goversion, builduser)
 }
