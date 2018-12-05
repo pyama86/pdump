@@ -181,7 +181,9 @@ func cycle(p *cycleParams) error {
 					ip4Layer := packet.Layer(layers.LayerTypeIPv4)
 					if ip4Layer != nil {
 						ip4 := ip4Layer.(*layers.IPv4)
-						counters[ip4.DstIP.String()].increment()
+						if counters[ip4.DstIP.String()] != nil {
+							counters[ip4.DstIP.String()].increment()
+						}
 					}
 				}
 			}
